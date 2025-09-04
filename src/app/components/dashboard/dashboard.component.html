@@ -1,0 +1,115 @@
+<nav class="navbar">
+  <div class="navbar-left">
+    <span class="app-name">User Management</span>
+  </div>
+  <div class="navbar-right">
+    <div class="profile-container" (click)="toggleProfilePopover()">
+      <div class="profile-icon">
+        <span class="profile-initials"> 
+        {{ username.charAt(0).toUpperCase() }}
+        </span>
+      </div>
+      <div class="popover" *ngIf="showProfilePopover">
+        <div class="popover-username">{{ username }}</div>
+        <button class="popover-logout" (click)="logout()">Logout</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="dashboard-body">
+  <div class="table-header">
+    <button class="add-user-btn" (click)="openAddUserModal()">Add User</button>
+  </div>
+  <table class="user-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users$ | async">
+        <td>{{ user.name }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.role }}</td>
+        <td>
+          <button class="edit-btn" (click)="openEditUserModal(user)">Edit</button>
+          <button class="delete-btn" (click)="delete(user.id!)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="modal-backdrop" *ngIf="showAddUserModal"></div>
+<div class="modal" *ngIf="showAddUserModal">
+  <div class="modal-content">
+    <h3>Add User</h3>
+    <form (ngSubmit)="addUser()" #addUserForm="ngForm">
+      <label>
+        Name:
+        <input type="text" [(ngModel)]="newUser.name" name="name" required />
+      </label>
+      <label>
+        Email:
+        <input type="email" [(ngModel)]="newUser.email" name="email" required />
+      </label>
+      <label>
+        Role:
+        <select [(ngModel)]="newUser.role" name="role" required>
+        <option value="" disabled>Select role</option>
+        <option value="tech">Tech</option>
+        <option value="id">ID</option>
+        <option value="gd">GD</option>
+        <option value="qa">QA</option>
+      </select>
+      </label>
+      <div class="modal-actions">
+        <button type="submit" [disabled]="!addUserForm.form.valid">
+           <span *ngIf="addingUser" class="loader"></span>
+          <span *ngIf="!addingUser">Add User</span>
+          <span *ngIf="addingUser">Adding...</span>
+        </button>
+        <button type="button" (click)="closeAddUserModal()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-backdrop" *ngIf="showEditUserModal"></div>
+<div class="modal" *ngIf="showEditUserModal">
+  <div class="modal-content">
+    <h3>Edit User</h3>
+    <form (ngSubmit)="updateUser()" #editUserForm="ngForm">
+      <label>
+        Name:
+        <input type="text" [(ngModel)]="editUser.name" name="editName" required />
+      </label>
+      <label>
+        Email:
+        <input type="email" [(ngModel)]="editUser.email" name="editEmail" required />
+      </label>
+      <label>
+        Role:
+        <select [(ngModel)]="newUser.role" name="role" required>
+        <option value="" disabled>Select role</option>
+        <option value="tech">Tech</option>
+        <option value="id">ID</option>
+        <option value="gd">GD</option>
+        <option value="qa">QA</option>
+      </select>
+      </label>
+      <div class="modal-actions">
+        <button type="submit" [disabled]="!editUserForm.form.valid">
+          <span *ngIf="updatingUser" class="loader"></span>
+          <span *ngIf="!updatingUser">Update</span>
+          <span *ngIf="updatingUser">Updating...</span>
+        </button>
+        <button type="button" (click)="closeEditUserModal()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
